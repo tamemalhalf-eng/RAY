@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAY | رأي — صوتك مهم، ورأيك يصنع الفرق</title>
+<style>
+:root{
+  --bg:#f5f7fb; --card:#ffffff; --text:#1a1d29; --muted:#6b7280;
+  --primary:#4f46e5; --primary2:#7c3aed; --blue:#2563eb;
+  --border:#e5e7eb; --shadow:0 4px 24px rgba(0,0,0,.08);
+  --danger:#ef4444; --success:#10b981; --gold:#f59e0b;
+}
+[data-theme="dark"]{
+  --bg:#0f1120; --card:#1a1d33; --text:#eef0fa; --muted:#9aa3b8;
+  --border:#2a2f4a; --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Arial,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;font-family:inherit}
+input,textarea,select{font-family:inherit;color:var(--text);background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;width:100%;font-size:15px;outline:none;transition:border .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--primary)}
+.btn{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;padding:12px 22px;border-radius:12px;font-weight:700;font-size:15px;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(99,60,245,.3)}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn-ghost{background:var(--card);color:var(--text);border:1.5px solid var(--border);box-shadow:none}
+.btn-sm{padding:7px 14px;font-size:13px;border-radius:10px}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#f97316)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.muted{color:var(--muted);font-size:13px}
+.tag{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:600}
+.tag-blue{background:linear-gradient(135deg,#2563eb,#06b6d4)}
+.badge{background:rgba(99,60,245,.12);color:var(--primary);padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--blue));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar-lg{width:80px;height:80px;font-size:32px}
+/* ---------- Splash ---------- */
+#splash{position:fixed;inset:0;z-index:999;background:linear-gradient(135deg,#1e1b4b,#4f46e5,#7c3aed,#2563eb);background-size:300% 300%;animation:bgmove 6s ease infinite;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+@keyframes bgmove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+#splash .logo{font-size:70px;font-weight:900;color:#fff;animation:pop 1s ease, float 2.5s ease-in-out 1s infinite}
+@keyframes pop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+#splash .slogan{color:rgba(255,255,255,.9);font-size:18px;animation:fadein 1.4s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+/* ---------- Layout ---------- */
+#app{display:none;min-height:100vh;padding-bottom:90px}
+#app.on{display:block}
+header.topbar{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:10px 18px;flex-wrap:wrap}
+.topbar .brand{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary2),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;flex:1;min-width:0}
+nav.tabs a{padding:8px 14px;border-radius:10px;font-weight:600;font-size:14px;white-space:nowrap;color:var(--muted)}
+nav.tabs a.on{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+main{max-width:960px;margin:0 auto;padding:20px 14px}
+.bottomnav{position:fixed;bottom:0;right:0;left:0;z-index:50;background:var(--card);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 4px}
+.bottomnav a{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--muted);padding:4px 10px;border-radius:10px}
+.bottomnav a .ic{font-size:20px}
+.bottomnav a.on{color:var(--primary);font-weight:800}
+@media(min-width:900px){.bottomnav{display:none}#app{padding-bottom:20px}}
+.notif-dot{position:absolute;top:2px;right:8px;background:var(--danger);color:#fff;border-radius:50%;font-size:10px;min-width:17px;height:17px;display:flex;align-items:center;justify-content:center;font-weight:800}
+/* ---------- Home ---------- */
+.hero{background:linear-gradient(135deg,var(--primary),var(--primary2),var(--blue));border-radius:22px;color:#fff;padding:32px 26px;margin-bottom:20px;position:relative;overflow:hidden}
+.hero::after{content:"💬";position:absolute;left:-10px;bottom:-24px;font-size:120px;opacity:.15}
+.hero h1{font-size:26px;margin-bottom:8px}
+.search-row{display:flex;gap:10px;margin:16px 0 24px}
+.grid{display:grid;gap:14px}
+.grid-2{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.grid-5{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.cat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center;font-weight:700;transition:transform .15s,border .15s;cursor:pointer}
+.cat-card:hover{transform:translateY(-3px);border-color:var(--primary)}
+.cat-card .ci{font-size:26px;display:block;margin-bottom:8px}
+.question{border-bottom:1px solid var(--border);padding:16px 0}
+.question:last-child{border:none}
+.q-title{font-weight:800;font-size:17px;margin-bottom:6px;cursor:pointer}
+.q-title:hover{color:var(--primary)}
+.vote-bar{display:flex;height:34px;border-radius:10px;overflow:hidden;font-size:12px;font-weight:700;margin:10px 0}
+.vote-bar div{display:flex;align-items:center;justify-content:center;color:#fff;min-width:0;transition:width .4s ease}
+.vb-yes{background:linear-gradient(90deg,#10b981,#059669)}
+.vb-no{background:linear-gradient(90deg,#ef4444,#dc2626)}
+.vb-mid{background:linear-gradient(90deg,#f59e0b,#d97706)}
+.vote-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.vote-btns button{flex:1;min-width:90px;padding:8px;border-radius:10px;font-weight:700;font-size:13px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);transition:all .15s}
+.vote-btns button.sel-yes{background:#10b981;border-color:#10b981;color:#fff}
+.vote-btns button.sel-no{background:#ef4444;border-color:#ef4444;color:#fff}
+.vote-btns button.sel-mid{background:#f59e0b;border-color:#f59e0b;color:#fff}
+.q-img{max-width:100%;border-radius:12px;margin-top:10px;max-height:320px;object-fit:cover}
+/* ---------- Chat ---------- */
+.chat-box{display:flex;flex-direction:column;gap:10px;height:55vh;overflow-y:auto;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--bg)}
+.msg{max-width:75%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.7;position:relative}
+.msg .t{display:block;font-size:10px;opacity:.7;margin-top:4px}
+.msg.me{align-self:flex-start;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border-bottom-right-radius:4px}
+.msg.them{align-self:flex-end;background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px}
+.chat-input{display:flex;gap:8px;margin-top:12px}
+/* ---------- Leaderboard ---------- */
+.lb-row{display:flex;align-items:center;gap:14px;padding:12px;border:1px solid var(--border);border-radius:14px;margin-bottom:10px;background:var(--card)}
+.lb-rank{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;background:var(--bg);color:var(--muted)}
+.lb-rank.r1{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff}
+.lb-rank.r2{background:linear-gradient(135deg,#9ca3af,#e5e7eb);color:#fff}
+.lb-rank.r3{background:linear-gradient(135deg,#b45309,#d97706);color:#fff}
+.xpbar{height:8px;background:var(--bg);border-radius:999px;overflow:hidden;margin-top:6px}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--blue));border-radius:999px;transition:width .5s}
+/* ---------- Admin / misc ---------- */
+table.adm{width:100%;border-collapse:collapse;font-size:13px}
+table.adm th,table.adm td{padding:9px 8px;border-bottom:1px solid var(--border);text-align:right}
+table.adm th{color:var(--muted);font-weight:700}
+.stat{display:flex;flex-direction:column;gap:4px;background:var(--bg);border-radius:14px;padding:16px;text-align:center}
+.stat b{font-size:24px;color:var(--primary)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.toast{position:fixed;bottom:96px;right:50%;transform:translateX(50%);background:#111827;color:#fff;padding:12px 22px;border-radius:12px;z-index:999;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3);animation:toastin .3s ease;max-width:90%}
+@keyframes toastin{from{opacity:0;transform:translateX(50%) translateY(14px)}to{opacity:1}}
+.star{color:var(--gold);cursor:pointer;font-size:22px}
+.comment{border-bottom:1px solid var(--border);padding:12px 0}
+.comment:last-child{border:none}
+.comment.best{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(5,150,105,.04));border-radius:12px;padding:12px;border:1px solid rgba(16,185,129,.3)!important}
+.auth-wrap{max-width:420px;margin:40px auto}
+.section-title{font-size:20px;font-weight:900;margin:26px 0 14px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,var(--border),transparent)}
+.hidden{display:none!important}
+.admin-only{display:none}
+body.is-admin .admin-only{display:inline-flex}
+.sort-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.sort-row button{padding:7px 14px;border-radius:10px;background:var(--card);border:1.5px solid var(--border);color:var(--muted);font-weight:700;font-size:13px}
+.sort-row button.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.rep-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.switch{position:relative;width:48px;height:26px;display:inline-block}
+.switch input{opacity:0;width:0;height:0}
+.switch i{position:absolute;inset:0;background:var(--border);border-radius:999px;transition:.2s;cursor:pointer}
+.switch i::after{content:"";position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;right:3px;transition:.2s}
+.switch input:checked+i{background:var(--primary)}
+.switch input:checked+i::after{transform:translateX(-22px)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div id="splash">
+  <div class="logo">RAY</div>
+  <div style="color:#fff;font-size:34px;font-weight:900;letter-spacing:2px">رأي</div>
+  <div class="slogan">صوتك مهم، ورأيك يصنع الفرق 💜</div>
+</div>
+
+<div id="app"></div>
+<div id="modal-root"></div>
+
+<script>
+/* ============================================================
+   RAY | رأي — تطبيق اجتماعي عربي متكامل (نسخة واجهة + قاعدة بيانات محلية)
+   قاعدة البيانات: LocalStorage (تعمل فوراً بدون خادم)
+   للنشر الحقيقي: اربط Firebase/Supabase — انظر دليل النشر أسفل الصفحة
+   ============================================================ */
+
+const LS = { get:(k,d)=>{try{const v=localStorage.getItem('ray_'+k);return v?JSON.parse(v):d}catch(e){return d}}, set:(k,v)=>localStorage.setItem('ray_'+k,JSON.stringify(v)) };
+const esc = s => (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+const now = () => new Date().toISOString();
+const ago = iso => { const s=(Date.now()-new Date(iso))/1000; if(s<60)return'الآن'; if(s<3600)return Math.floor(s/60)+' د'; if(s<86400)return Math.floor(s/3600)+' س'; if(s<604800)return Math.floor(s/86400)+' يوم'; return new Date(iso).toLocaleDateString('ar'); };
+const hash = s => { let h=0; for(let i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0} return 'h'+(h>>>0).toString(36)+s.length };
+
+/* ---------- التصنيفات ---------- */
+const CATS = [
+ {id:'din',n:'ديني',i:'🕌'},{id:'ilm',n:'علمي',i:'🔬'},{id:'tha',n:'ثقافي',i:'📚'},
+ {id:'ijt',n:'اجتماعي',i:'🤝'},{id:'ala',n:'العلاقات',i:'💞'},{id:'tal',n:'تعليمي',i:'🎓'},
+ {id:'iqt',n:'اقتصادي',i:'💰'},{id:'siy',n:'سياسي',i:'🏛️'},{id:'taq',n:'تقني',i:'💻'},{id:'am',n:'عام',i:'🌐'}
+];
+const catOf = id => CATS.find(c=>c.id===id)||CATS[9];
+const SPEC = ['مستشار ديني','مستشار نفسي','مستشار أسري','مستشار تعليمي','مستشار مهني','مستشار مالي','مستشار علمي','مستشار قانوني','مستشار تقني','مستشار اجتماعي'];
+
+/* ---------- المستويات ---------- */
+const LEVELS = ['مبتدئ','مشارك','نشيط','متميز','خبير','مؤثر','أسطورة رأي'];
+const levelOf = xp => { const t=[0,50,150,350,700,1200,2000]; let l=0; t.forEach((x,i)=>{if(xp>=x)l=i}); return {name:LEVELS[l],next:t[l+1]||null,cur:t[l]}; };
+
+/* ---------- XP ---------- */
+function addXP(userId, pts, reason){
+  if(!userId) return;
+  let x = LS.get('xp',{}); x[userId]=(x[userId]||0)+pts; LS.set('xp',x);
+  if(userId===me()?.id) notify(userId,'نقاط خبرة',`+${pts} نقطة: ${reason}`, '#/leaderboard');
+  saveLeaderHistory(userId, pts);
+}
+function xpOf(id){ return LS.get('xp',{})[id]||0; }
+function saveLeaderHistory(id,pts){
+  let h = LS.get('lb',{}); const wk=new Date().toISOString().slice(0,10), mo=wk.slice(0,7);
+  h[id]=h[id]||{}; h[id]['w'+wk]=(h[id]['w'+wk]||0)+pts; h[id]['m'+mo]=(h[id]['m'+mo]||0)+pts; LS.set('lb',h);
+}
+const currentWeek = ()=>'w'+new Date().toISOString().slice(0,10);
+const currentMonth = ()=>'m'+new Date().toISOString().slice(0,7);
+
+/* ---------- قاعدة البيانات المحلية ---------- */
+const DB = {
+  users:   ()=>LS.get('users',[]),
+  saveUsers:u=>LS.set('users',u),
+  questions:()=>LS.get('questions',[]),
+  saveQuestions:q=>LS.set('questions',q),
+  votes:   ()=>LS.get('votes',{}),
+  saveVotes:v=>LS.set('votes',v),
+  comments:()=>LS.get('comments',[]),
+  saveComments:c=>LS.set('comments',c),
+  consults:()=>LS.get('consults',[]),
+  saveConsults:c=>LS.set('consults',c),
+  advisors:()=>LS.get('advisors',[]),
+  saveAdvisors:a=>LS.set('advisors',a),
+  chats:   ()=>LS.get('chats',[]),
+  saveChats:c=>LS.set('chats',c),
+  notifs:  ()=>LS.get('notifs',[]),
+  saveNotifs:n=>LS.set('notifs',n),
+  ratings: ()=>LS.get('ratings',{}),
+  saveRatings:r=>LS.set('ratings',r),
+  reports: ()=>LS.get('reports',[]),
+  saveReports:r=>LS.set('reports',r),
+  flags:   ()=>LS.get('flags',{}),
+  saveFlags:f=>LS.set('flags',f)
+};
+
+function notify(userId, title, body, link){
+  if(!userId) return;
+  const n = DB.notifs(); n.unshift({id:uid(),userId,title,body,link:link||'#/',read:false,at:now()});
+  DB.saveNotifs(n.slice(0,200));
+}
+
+/* ---------- الجلسة ---------- */
+function me(){ const id=LS.get('session',null); if(!id)return null; return DB.users().find(u=>u.id===id)||null; }
+function setSession(id){ LS.set('session',id); refreshAuthUI(); }
+function logout(){ LS.set('session',null); location.hash='#/'; render(); }
+function isAdmin(){ return me()?.role==='admin'; }
+
+/* ---------- بيانات أولية ---------- */
+function seed(){
+  if(LS.get('seeded',false)) return;
+  const admins=[{id:'admin1',name:'إدارة رأي',email:'admin@ray.app',pass:hash('rayadmin123'),bio:'حساب إدارة التطبيق',role:'admin',avatar:'',verified:true,blocked:false,guest:false,created:now(),notify:true}];
+  let us=[{id:'u1',name:'أحمد الخطيب',email:'ahmad@example.com',pass:hash('123456'),bio:'مهتم بالعلوم والتقنية',role:'user',avatar:'',verified:false,blocked:false,guest:false,created:now(),notify:true},
+    {id:'u2',name:'سارة الحمصي',email:'sara@example.com',pass:hash('123456'),bio:'أحب القراءة والنقاش الهادئ',role:'user',avatar:'',verified:false,blocked:false,guest:false,created:now(),notify:true},
+    {id:'u3',name:'خالد العبدالله',email:'khaled@example.com',pass:hash('123456'),bio:'طالب جامعي - علم نفس',role:'user',avatar:'',verified:false,blocked:false,guest:false,created:now(),notify:true}];
+  DB.saveUsers(admins.concat(us));
+  const qs=[
+   {id:'q1',userId:'u1',title:'هل تؤيدون تعليم البرمجة من المرحلة الابتدائية؟',body:'وجهة نظري: نعم، لأن تفكير الحاسوب ينمي المنطق والإبداع مبكراً.',cat:'tal',image:'',anonymous:false,views:0,created:now(),edited:false},
+   {id:'q2',userId:'u2',title:'هل تشعرون أن وسائل التواصل ضعفت العلاقات الحقيقية؟',body:'',cat:'ijt',image:'',anonymous:true,views:0,created:now(),edited:false},
+   {id:'q3',userId:'u3',title:'هل الاستثمار في الذهب أفضل من الاستثمار في العملات الرقمية؟',body:'أرى أن الذهب أكثر أماناً، وأنتم؟',cat:'iqt',image:'',anonymous:false,views:0,created:now(),edited:false},
+   {id:'q4',userId:'u1',title:'هل يجب على الحكومات فرض ضرائب على شركات التكنولوجيا العملاقة؟',body:'',cat:'siy',image:'',anonymous:false,views:0,created:now(),edited:false},
+   {id:'q5',userId:'u2',title:'ما رأيكم في التعليم عن بعد؟ هل حقق نفس جودة الحضوري؟',body:'',cat:'tal',image:'',anonymous:true,views:0,created:now(),edited:false},
+   {id:'q6',userId:'u3',title:'هل الذكاء الاصطناعي سيحل محل المبرمجين خلال عشر سنوات؟',body:'',cat:'taq',image:'',anonymous:false,views:0,created:now(),edited:false},
+   {id:'q7',userId:'u1',title:'هل القراءة الورقية أفضل من القراءة الإلكترونية؟',body:'',cat:'tha',image:'',anonymous:false,views:0,created:now(),edited:false},
+   {id:'q8',userId:'u2',title:'هل التسامح في العلاقات أهم من إثبات الحق؟',body:'وجهة نظري: التسامح يحفظ العلاقات لكن بحدود.',cat:'ala',image:'',anonymous:false,views:0,created:now(),edited:false},
+   {id:'q9',userId:'u3',title:'هل تؤيدون تخصيص جزء من الزكاة لدعم البحث العلمي؟',body:'',cat:'din',image:'',anonymous:false,views:0,created:now(),edited:false},
+   {id:'q10',userId:'u1',title:'هل من العدل أن يُحسم القطاع العام بمرتبات أعلى من الخاص؟',body:'',cat:'iqt',image:'',anonymous:false,views:0,created:now(),edited:false}
+  ];
+  DB.saveQuestions(qs);
+  let v={};
+  v['q1']={u1:'yes',u2:'yes',u3:'mid'}; v['q2']={u1:'yes',u3:'no'}; v['q3']={u1:'mid',u2:'yes'}; v['q6']={u1:'yes',u2:'no',u3:'yes'};
+  DB.saveVotes(v);
+  const cs=[
+   {id:'c1',userId:'u2',title:'عندي خوف دائم من المستقبل بعد البكلوريا',body:'أشعر بالقلق تجاه اختيار تخصصي ومصيري الدراسي، ولا أستطيع النوم بسبب التفكير.',cat:'ala',anonymous:true,created:now(),advisorId:null,status:'open',answers:[{id:'a1',by:'adv2',text:'القلق تجاه المستقبل طبيعي جداً في سنك. أنصحك بكتابة مؤهلاتك واهتماماتك، واستشارة أهل التجربة، ولا تسمح للخوف أن يقرر عنك. خطوة صغيرة كل يوم تقربك من وضوح الرؤية.',likes:12,at:now()}]},
+   {id:'c2',userId:'u1',title:'أفكر بمشروع تجاري صغير برأس مال محدود',body:'عندي فكرة متجر إلكتروني لكن رأس مالي صغير جداً، هل أبدأ أم أنتظر؟',cat:'iqt',anonymous:false,created:now(),advisorId:null,status:'open',answers:[{id:'a2',by:'adv6',text:'ابدأ صغيراً واختبر فكرتك بأقل تكلفة ممكنة. لا تنتظر الظروف المثالية — ابدأ بمنتج واحد، وقِس النتائج، ثم وسّع تدريجياً. الجلوس على المال الضائع أخطر من البدء بمبلغ صغير.',likes:30,at:now()}]}
+  ];
+  DB.saveConsults(cs);
+  const adv=[
+   {id:'adv1',name:'د. عبد الرحمن الشامي',spec:0,verified:true,ratingCount:0,totalRating:0,consults:41,bio:'دكتور في الشريعة، خبرة 15 سنة في الإفتاء والإرشاد.',open:true,avatar:'🕌',cv:'دكتوراه الشريعة - جامعة دمشق'},
+   {id:'adv2',name:'أ. ليلى حداد',spec:1,verified:true,ratingCount:0,totalRating:0,consults:67,bio:'أخصائية نفسية إكلينيكية، أعمل مع فئة الشباب.',open:true,avatar:'🧠',cv:'ماجستير علم النفس الإكلينيكي'},
+   {id:'adv3',name:'أ. مازن العلي',spec:2,verified:true,ratingCount:0,totalRating:0,consults:35,bio:'مرشد أسري معتمد، أتخصص في حل النزاعات الأسرية.',open:true,avatar:'👨‍👩‍👧',cv:'شهادة إرشاد أسري معتمدة'},
+   {id:'adv4',name:'د. هند الأتاسي',spec:3,verified:true,ratingCount:0,totalRating:0,consults:52,bio:'دكتورة تربية، أرشد الطلاب لاختيار تخصصاتهم.',open:true,avatar:'🎓',cv:'دكتوراه في التربية'},
+   {id:'adv5',name:'م. سامر قاسم',spec:4,verified:true,ratingCount:0,totalRating:0,consults:28,bio:'مهندس صناعي، خبرة في التخطيط المهني.',open:true,avatar:'💼',cv:'هندسة صناعية + شهادة إدارة مشاريع'},
+   {id:'adv6',name:'أ. رياض مارديني',spec:5,verified:true,ratingCount:0,totalRating:0,consults:44,bio:'محلل مالي، أعمل مع روّاد الأعمال.',open:true,avatar:'💰',cv:'محلل مالي معتمد CFA-1'},
+   {id:'adv7',name:'د. نور الدين عجمي',spec:6,verified:true,ratingCount:0,totalRating:0,consults:22,bio:'دكتور فيزياء، أشرح العلوم بطريقة مبسطة.',open:true,avatar:'🔬',cv:'دكتوراه فيزياء نظرية'},
+   {id:'adv8',name:'المحامي فراس الجزائري',spec:7,verified:true,ratingCount:0,totalRating:0,consults:58,bio:'محامٍ متمرس، أسعى لتبسيط القانون للناس.',open:true,avatar:'⚖️',cv:'بكالوريوس حقوق + نقابة المحامين'},
+   {id:'adv9',name:'م. يوسف النجار',spec:8,verified:true,ratingCount:0,totalRating:0,consults:73,bio:'مهندس برمجيات، متخصص في تطوير الويب والهواتف.',open:true,avatar:'💻',cv:'هندسة معلوماتية + 8 سنوات خبرة'},
+   {id:'adv10',name:'أ. رنا سلوم',spec:9,verified:true,ratingCount:0,totalRating:0,consults:39,bio:'باحثة اجتماعية، أهتم بقضايا المجتمع الشبابي.',open:true,avatar:'🤝',cv:'ماجستير علم اجتماع'}
+  ];
+  DB.saveAdvisors(adv);
+  const c=[
+   {id:'ch1',userId:'u2',advisorId:'adv2',messages:[{from:'u2',text:'مرحباً، هل يمكنك مساعدتي بخصوص القلق الدراسي؟',at:now()},{from:'adv',text:'أهلاً بك! بالتأكيد، أخبرني بما تشعر به وسأساعدك بأفضل ما أستطيع.',at:now()}]}
+  ];
+  DB.saveChats(c);
+  let xp={u1:120,u2:300,u3:85}; LS.set('xp',xp);
+  LS.set('seeded',true);
+}
+seed();
+
+/* ---------- توست ---------- */
+function toast(msg){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2600); }
+
+/* ---------- مودال ---------- */
+function openModal(html){ document.getElementById('modal-root').innerHTML = `<div style="position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)closeModal()"><div class="card" style="max-width:480px;width:100%;max-height:86vh;overflow-y:auto">${html}</div></div>`; }
+function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
+
+/* ---------- الموجّه ---------- */
+function route(){
+  let h = location.hash || '#/';
+  // توافق مع الروابط القديمة التي كانت تُنشأ بدون الشرطة بعد #
+  if(h.startsWith('#q/')) h = '#/q/' + h.slice(3);
+  if(h.startsWith('#advisor/')) h = '#/advisor/' + h.slice(9);
+  if(h.startsWith('#chat/')) h = '#/chat/' + h.slice(6);
+  if(h.startsWith('#cat/')) h = '#/cat/' + h.slice(5);
+  const app = document.getElementById('app');
+  app.classList.add('on');
+  refreshAuthUI();
+  if(h.startsWith('#/q/')) return renderQuestion(decodeURIComponent(h.slice(4)));
+  if(h.startsWith('#/cat/')) return renderCategory(decodeURIComponent(h.slice(6)));
+  if(h.startsWith('#/advisor/')) return renderAdvisor(decodeURIComponent(h.slice(10)));
+  if(h.startsWith('#/chat/')) return renderChat(decodeURIComponent(h.slice(7)));
+  if(h.startsWith('#/editq/')) return renderAddQuestion(decodeURIComponent(h.slice(8)));
+  const map = {'#/':'renderHome','#/login':'renderLogin','#/register':'renderRegister','#/add':'renderAddQuestion','#/consult':'renderConsults','#/advisors':'renderAdvisors','#/chats':'renderChats','#/notifs':'renderNotifs','#/profile':'renderProfile','#/leaderboard':'renderLeaderboard','#/settings':'renderSettings','#/support':'renderSupport','#/admin':'renderAdmin','#/cats':'renderCats'};
+  (window[map[h]]||renderHome)();
+}
+window.addEventListener('hashchange',route);
+
+/* ---------- الهيكل العام ---------- */
+function navHTML(active){
+  const u=me();
+  const unread = DB.notifs().filter(n=>n.userId===(u?.id)&&!n.read).length;
+  const links = [
+    ['#/','🏠','الرئيسية'],['#/cats','🗂️','التصنيفات'],['#/advisors','🎓','المستشارون'],['#/chats','💬','المحادثات'],['#/notifs','🔔','الإشعارات'],['#/leaderboard','🏆','المتصدرون'],['#/admin','🛡️','الإدارة']
+  ];
+  const top = links.map(l=>`<a href="${l[0]}" class="${active===l[0]?'on':''} ${l[0]==='#/admin'?'admin-only':''}" style="${l[0]==='#/admin'?'display:none':''}">${l[1]} ${l[2]}</a>`).join('');
+  const bottom = links.filter(l=>!['#/cats','#/advisors'].includes(l[0])).map(l=>`<a href="${l[0]}" class="${active===l[0]?'on':''}" style="${l[0]==='#/admin'?'display:none':''}"><span class="ic">${l[1]}</span>${l[2]}${l[0]==='#/notifs'&&unread?`<span class="notif-dot">${unread}</span>`:''}</a>`).join('');
+  const themeBtn = `<button class="btn btn-ghost btn-sm" onclick="toggleTheme()" title="الوضع">🌙</button>`;
+  const authArea = u
+    ? `<a href="#/profile" style="display:flex;align-items:center;gap:8px"><span class="avatar">${u.avatar?`<img src="${u.avatar}">`:esc(u.name[0])}</span><span class="muted" style="font-size:12px">${esc(u.name.split(' ')[0])}</span></a>`
+    : `<a href="#/login" class="btn btn-sm">دخول</a>`;
+  return `<header class="topbar">
+    <a class="brand" href="#/">RAY رأي</a>
+    <nav class="tabs">${top}</nav>
+    ${themeBtn} ${authArea}
+  </header>
+  <nav class="bottomnav">${bottom}
+    <a href="#/consult"><span class="ic">📋</span>استشارات</a>
+    <a href="#/profile"><span class="ic">👤</span>حسابي</a>
+  </nav>`;
+}
+function layout(active, inner){ document.getElementById('app').innerHTML = navHTML(active)+'<main>'+inner+'</main>'; window.scrollTo(0,0); }
+function refreshAuthUI(){ document.body.classList.toggle('is-admin', isAdmin()); }
+
+function toggleTheme(){ const t=document.documentElement.dataset.theme==='dark'?'light':'dark'; document.documentElement.dataset.theme=t; LS.set('theme',t); }
+document.documentElement.dataset.theme = LS.get('theme','light');
+
+/* ---------- عناصر مشتركة ---------- */
+function userOf(id){ return DB.users().find(u=>u.id===id); }
+function qAuthor(q){ if(q.anonymous) return {name:'مستخدم مجهول',avatar:'🕵️'}; const u=userOf(q.userId); return u?{name:u.name,avatar:u.avatar}:{name:'مستخدم محذوف',avatar:''}; }
+function voteStats(qid){
+  const v = DB.votes()[qid]||{}; const vals=Object.values(v);
+  const c={yes:0,no:0,mid:0}; vals.forEach(x=>c[x]!==undefined&&c[x]++);
+  const total=vals.length;
+  const p = total?{yes:Math.round(c.yes/total*100),no:Math.round(c.no/total*100),mid:100-Math.round(c.yes/total*100)-Math.round(c.no/total*100)}:{yes:0,no:0,mid:0};
+  return {c,p,total};
+}
+function voteBarHTML(qid){
+  const {p,total}=voteStats(qid);
+  if(!total) return `<div class="muted" style="margin:8px 0">لا أصوات بعد — كن أول المشاركين 🗳️</div>`;
+  return `<div class="muted" style="margin:10px 0 4px">${total} صوت</div>
+  <div class="vote-bar">
+    <div class="vb-yes" style="width:${p.yes||0}%">أوافق ${p.yes||0}%</div>
+    <div class="vb-mid" style="width:${p.mid||0}%">محايد ${p.mid||0}%</div>
+    <div class="vb-no" style="width:${p.no||0}%">لا أوافق ${p.no||0}%</div>
+  </div>`;
+}
+function voteButtonsHTML(qid){
+  const u=me(); const my=DB.votes()[qid]?.[u?.id];
+  const need=()=>toast('سجّل دخولك أو ادخل كضيف أولاً');
+  return `<div class="vote-btns">
+    <button class="${my==='yes'?'sel-yes':''}" onclick="doVote('${qid}','yes')">👍 أوافق</button>
+    <button class="${my==='mid'?'sel-mid':''}" onclick="doVote('${qid}','mid')">😐 محايد</button>
+    <button class="${my==='no'?'sel-no':''}" onclick="doVote('${qid}','no')">👎 لا أوافق</button>
+  </div>`;
+}
+window.doVote = async function(qid,val){
+  const u=me(); if(!u){location.hash='#/login';return;}
+  const map={yes:'agree',no:'disagree',mid:'neutral'}; const old=DB.votes()[qid]?.[u.id];
+  let result;
+  if(old===val) result=await raySupabase.from('votes').delete().eq('question_id',Number(qid)).eq('user_id',u.id);
+  else result=await raySupabase.from('votes').upsert({question_id:Number(qid),user_id:u.id,vote:map[val]},{onConflict:'question_id,user_id'});
+  if(result.error){toast('تعذر حفظ التصويت: '+result.error.message);return;}
+  await raySyncSocial(); toast(old===val?'تم سحب صوتك':'تم تسجيل صوتك ✓'); route();
+};
+function questionCardHTML(q, compact){
+  const a=qAuthor(q); const cat=catOf(q.cat);
+  const cmts=DB.comments().filter(c=>c.qid===q.id);
+  const u=me();
+  return `<div class="question">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">
+      <span class="avatar" style="width:34px;height:34px;font-size:15px">${a.avatar?`<img src="${a.avatar}">`:a.avatar==='🕵️'?'🕵️':esc(a.name[0])}</span>
+      <div><div style="font-weight:700;font-size:14px">${esc(a.name)}</div><div class="muted">${ago(q.created)} · ${cat.i} ${cat.n}</div></div>
+      ${u&&(u.id===q.userId)?`<span style="margin-right:auto;display:flex;gap:6px">
+        <a class="btn btn-ghost btn-sm" href="#/editq/${q.id}">✏️</a>
+        <button class="btn btn-danger btn-sm" onclick="delQuestion('${q.id}')">🗑️</button></span>`:''}
+    </div>
+    <div class="q-title" onclick="location.hash='#/q/${q.id}'">${esc(q.title)}</div>
+    ${q.body?`<div class="muted" style="line-height:1.8">${esc(q.body).slice(0,compact?120:400)}</div>`:''}
+    ${q.image?`<img class="q-img" src="${q.image}" onclick="location.hash='#/q/${q.id}'">`:''}
+    ${voteBarHTML(q.id)}
+    ${voteButtonsHTML(q.id)}
+    <div class="muted" style="margin-top:10px;display:flex;gap:16px;align-items:center">
+      <a href="#/q/${q.id}" style="font-weight:700;color:var(--primary)">💬 ${cmts.length} تعليق</a>
+      <span>👁️ ${q.views||0}</span>
+      <span style="margin-right:auto"></span>
+      <button class="btn btn-ghost btn-sm" onclick="reportContent('سؤال','${q.id}')">🚩 بلاغ</button>
+    </div>
+  </div>`;
+}
+window.delQuestion=function(id){ if(!confirm('حذف السؤال نهائياً؟'))return; DB.saveQuestions(DB.questions().filter(q=>q.id!==id)); DB.saveComments(DB.comments().filter(c=>c.qid!==id)); toast('تم الحذف'); route(); };
+
+window.reportContent = function(type,id){
+  let u=me(); if(!u){ return location.hash='#/login'; }
+  openModal(`<h3 style="margin-bottom:12px">🚩 تبليغ عن ${type}</h3>
+  <p class="muted" style="margin-bottom:10px">أخبرنا سبب البلاغ:</p>
+  <div style="display:flex;flex-direction:column;gap:8px">
+  ${['محتوى مسيء','كلام بذيء أو تحقير','معلومات مضللة','تحرش أو تنمر','سبام','أخرى'].map(r=>`<button class="btn btn-ghost" onclick="submitReport('${type}','${id}','${r}')">${r}</button>`).join('')}
+  </div>`);
+};
+window.submitReport=function(type,id,reason){
+  const r=DB.reports(); r.unshift({id:uid(),by:me()?.id,type,refId:id,reason,status:'open',at:now()}); DB.saveReports(r);
+  closeModal(); toast('تم إرسال البلاغ، شكراً لحمايتك المجتمع ✓');
+};
+
+/* ---------- الرئيسية ---------- */
+function renderHome(){
+  const qs=DB.questions();
+  const newest=[...qs].sort((a,b)=>String(b.created||'').localeCompare(String(a.created||''))).slice(0,6);
+  const newestIds=new Set(newest.map(q=>String(q.id)));
+  const hot=[...qs]
+    .filter(q=>!newestIds.has(String(q.id)))
+    .map(q=>({q,s:(voteStats(q.id).total)+(DB.comments().filter(c=>String(c.qid)===String(q.id)).length*3)}))
+    .sort((a,b)=>b.s-a.s).slice(0,6).map(x=>x.q);
+  const shownIds=new Set([...newestIds,...hot.map(q=>String(q.id))]);
+  const trending=[...qs]
+    .filter(q=>!shownIds.has(String(q.id)))
+    .sort((a,b)=>(b.views||0)-(a.views||0)).slice(0,4);
+  const advs=DB.advisors().slice(0,3);
+  const kw = LS.get('search','');
+  const searched = kw? qs.filter(q=>q.title.includes(kw)||(q.body||'').includes(kw)) : null;
+  layout('#/',`
+    <div class="hero">
+      <h1>صوتك مهم، ورأيك يصنع الفرق 💜</h1>
+      <p style="opacity:.92;line-height:1.9">اطرح سؤالك، شارك رأيك، صوّت، واستشر المختصين — كل ذلك في مكان واحد.</p>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <a href="#/add" class="btn" style="background:#fff;color:var(--primary)">➕ أضف سؤالاً أو استشارة</a>
+        <a href="#/consult" class="btn btn-ghost" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.4)">📋 قسم الاستشارات</a>
+      </div>
+    </div>
+    <div class="search-row">
+      <input id="search" placeholder="🔍 ابحث عن سؤال أو موضوع..." value="${esc(kw)}" onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="btn" onclick="doSearch()">بحث</button>
+      ${kw?`<button class="btn btn-ghost" onclick="LS.set('search','');route()">✖</button>`:''}
+    </div>
+    ${searched?`<div class="card" style="margin-bottom:20px"><h3 style="margin-bottom:10px">نتائج البحث عن "${esc(kw)}" (${searched.length})</h3>${searched.length?searched.map(q=>questionCardHTML(q,true)).join(''):'<p class="muted">لا نتائج مطابقة.</p>'}</div>`:''}
+    <div class="section-title">🗂️ التصنيفات</div>
+    <div class="grid grid-5" style="margin-bottom:26px">${CATS.map(c=>`<a class="cat-card" href="#/cat/${c.id}"><span class="ci">${c.i}</span>${c.n}</a>`).join('')}</div>
+    <div class="section-title">🔥 الأسئلة الأكثر تفاعلاً</div>
+    <div class="card" style="margin-bottom:26px">${hot.map(q=>questionCardHTML(q,true)).join('')}</div>
+    <div class="section-title">📰 الأسئلة الجديدة</div>
+    <div class="card" style="margin-bottom:26px">${newest.map(q=>questionCardHTML(q,true)).join('')}</div>
+    <div class="section-title">📈 الرائج الآن</div>
+    <div class="card" style="margin-bottom:26px">${trending.map(q=>questionCardHTML(q,true)).join('')}</div>
+    <div class="section-title">🎓 أفضل المستشارين</div>
+    <div class="grid grid-2" style="margin-bottom:26px">
+      ${advs.map(a=>advisorCardHTML(a)).join('')}
+      <a class="cat-card" href="#/advisors" style="display:flex;align-items:center;justify-content:center">عرض جميع المستشارين ←</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <h3 style="margin-bottom:8px">👑 لوحة المتصدرين</h3>
+      <p class="muted" style="margin-bottom:14px">نافس مجتمع رأي واحصد نقاط الخبرة XP</p>
+      <a class="btn" href="#/leaderboard">🏆 عرض الترتيب</a>
+    </div>`);
+}
+window.doSearch=function(){ LS.set('search',document.getElementById('search').value.trim()); route(); };
+
+/* ---------- التصنيفات ---------- */
+function renderCats(){ layout('#/cats',`<h2 style="margin-bottom:16px">🗂️ كل التصنيفات</h2><div class="grid grid-5">${CATS.map(c=>{const n=DB.questions().filter(q=>q.cat===c.id).length;return`<a class="cat-card" href="#/cat/${c.id}"><span class="ci">${c.i}</span>${c.n}<div class="muted" style="font-weight:400;margin-top:6px">${n} سؤال</div></a>`}).join('')}</div>`); }
+function renderCategory(id){
+  const c=catOf(id); const qs=DB.questions().filter(q=>q.cat===id).sort((a,b)=>b.created.localeCompare(a.created));
+  layout('#/cats',`<h2 style="margin-bottom:4px">${c.i} ${c.n}</h2><p class="muted" style="margin-bottom:16px">${qs.length} سؤال في هذا القسم</p>
+  <a class="btn" href="#/add" style="margin-bottom:16px;display:inline-block">➕ أضف سؤالاً هنا</a>
+  <div class="card">${qs.length?qs.map(q=>questionCardHTML(q,true)).join(''):'<p class="muted" style="text-align:center;padding:30px">لا أسئلة بعد في هذا القسم. كن الأول! ✨</p>'}</div>`);
+}
+
+/* ---------- المصادقة ---------- */
+function renderLogin(){
+  layout('#/login',`<div class="auth-wrap card">
+    <h2 style="text-align:center;margin-bottom:6px">تسجيل الدخول</h2>
+    <p class="muted" style="text-align:center;margin-bottom:18px">أهلاً بعودتك إلى رأي 👋</p>
+    <form onsubmit="return doLogin(event)" style="display:flex;flex-direction:column;gap:12px">
+      <input id="lemail" type="email" placeholder="البريد الإلكتروني" required>
+      <input id="lpass" type="password" placeholder="كلمة المرور" required>
+      <button class="btn" type="submit">دخول</button>
+    </form>
+    <div style="display:flex;gap:10px;margin:14px 0">
+      <button class="btn btn-ghost" style="flex:1" onclick="googleLogin()">🔵 المتابعة عبر Google</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="guestLogin()">👤 الدخول كضيف</button>
+    </div>
+    <p class="muted" style="text-align:center">ليس لديك حساب؟ <a href="#/register" style="color:var(--primary);font-weight:700">إنشاء حساب</a></p>
+  </div>`);
+}
+function renderRegister(){
+  layout('#/register',`<div class="auth-wrap card">
+    <h2 style="text-align:center;margin-bottom:6px">إنشاء حساب جديد</h2>
+    <p class="muted" style="text-align:center;margin-bottom:18px">انضم إلى مجتمع رأي 💜</p>
+    <form onsubmit="return doRegister(event)" style="display:flex;flex-direction:column;gap:12px">
+      <input id="rname" placeholder="الاسم الكامل" required maxlength="40">
+      <input id="remail" type="email" placeholder="البريد الإلكتروني" required>
+      <input id="rpass" type="password" placeholder="كلمة المرور (6 أحرف فأكثر)" minlength="6" required>
+      <button class="btn" type="submit">إنشاء الحساب</button>
+    </form>
+    <div style="margin-top:14px"><button class="btn btn-ghost" style="width:100%" onclick="googleLogin()">🔵 التسجيل عبر Google</button></div>
+    <p class="muted" style="text-align:center;margin-top:14px">لديك حساب؟ <a href="#/login" style="color:var(--primary);font-weight:700">تسجيل الدخول</a></p>
+  </div>`);
+}
+window.doLogin=function(e){
+  e.preventDefault();
+  const em=document.getElementById('lemail').value.trim().toLowerCase(), pw=document.getElementById('lpass').value;
+  const u=DB.users().find(x=>x.email===em);
+  if(!u||u.pass!==hash(pw)){ toast('بيانات الدخول غير صحيحة'); return false; }
+  if(u.blocked){ toast('هذا الحساب محظور. تواصل مع الدعم'); return false; }
+  const wasGuest = u.guest && u.upgraded;
+  setSession(u.id); toast('مرحباً بك '+u.name+' 👋'); location.hash='#/'; return false;
+};
+window.doRegister=function(e){
+  e.preventDefault();
+  const name=document.getElementById('rname').value.trim(), em=document.getElementById('remail').value.trim().toLowerCase(), pw=document.getElementById('rpass').value;
+  const us=DB.users();
+  if(us.some(x=>x.email===em)){ toast('هذا البريد مسجّل مسبقاً'); return false; }
+  const gid = LS.get('session',null); const g = gid?us.find(x=>x.id===gid&&x.guest):null;
+  if(g){ // تحويل حساب الضيف إلى دائم
+    g.name=name; g.email=em; g.pass=hash(pw); g.guest=false; g.upgraded=true;
+    DB.saveUsers(us); setSession(g.id); toast('تم تحويل حسابك الضيف إلى حساب دائم ✓');
+  } else {
+    const nu={id:uid(),name,email:em,pass:hash(pw),bio:'',role:'user',avatar:'',verified:false,blocked:false,guest:false,created:now(),notify:true};
+    us.push(nu); DB.saveUsers(us); setSession(nu.id);
+    addXP(nu.id,20,'انضمامك إلى رأي');
+    toast('تم إنشاء حسابك بنجاح 🎉');
+  }
+  location.hash='#/'; return false;
+};
+window.guestLogin=function(){
+  const u={id:'guest_'+uid(),name:'ضيف',email:'',pass:'',bio:'حساب ضيف مؤقت',role:'user',avatar:'',verified:false,blocked:false,guest:true,created:now(),notify:true};
+  const us=DB.users(); us.push(u); DB.saveUsers(us); setSession(u.id);
+  toast('دخلت كضيف — يمكنك تحويل حسابك لاحقاً من الملف الشخصي'); location.hash='#/';
+};
+window.googleLogin=function(){
+  // في النسخة الحقيقية: Firebase Auth GoogleProvider. هنا: تسجيل سريع بمحاكاة بريد Google.
+  const em='google_'+uid().slice(0,6)+'@gmail.com';
+  const u={id:'g_'+uid(),name:'مستخدم Google',email:em,pass:hash(uid()),bio:'',role:'user',avatar:'',verified:false,blocked:false,guest:false,created:now(),notify:true,provider:'google'};
+  const us=DB.users(); us.push(u); DB.saveUsers(us); setSession(u.id);
+  toast('تم الدخول عبر Google (وضع تجريبي بدون خادم)'); location.hash='#/';
+};
+
+/* ---------- اتصال Supabase: المصادقة الحقيقية ---------- */
+const RAY_SUPABASE_URL = 'https://etdskmfplttdljwctjya.supabase.co';
+const RAY_SUPABASE_KEY = 'sb_publishable_c831iunmIt2YsLFXPNfQow_B0wuDos-';
+const raySupabase = window.supabase.createClient(RAY_SUPABASE_URL, RAY_SUPABASE_KEY);
+
+// مزامنة الأسئلة والتعليقات مع قاعدة البيانات المشتركة
+function rayQuestionFromRow(r){return {id:String(r.id),userId:r.user_id,title:r.title,body:r.content,cat:r.category,image:'',anonymous:!!r.is_anonymous,views:0,created:r.created_at||now(),edited:false};}
+function rayCommentFromRow(r){return {id:String(r.id),qid:String(r.question_id),userId:r.user_id,text:r.content,at:r.created_at||now(),likes:[],parent:r.parent_id?String(r.parent_id):null,best:!!r.is_best,anonymous:!!r.is_anonymous};}
+async function raySyncSocial(){
+ const {data:qs,error:qe}=await raySupabase.from('questions').select('*').order('created_at',{ascending:false}); if(qe) throw qe;
+ const {data:cs,error:ce}=await raySupabase.from('comments').select('*').order('created_at',{ascending:true}); if(ce) throw ce;
+ const {data:vs,error:ve}=await raySupabase.from('votes').select('*'); if(ve) throw ve;
+ const {data:ls,error:le}=await raySupabase.from('likes').select('*'); if(le) throw le;
+ DB.saveQuestions((qs||[]).map(rayQuestionFromRow));
+ const likeMap={}; (ls||[]).forEach(x=>{(likeMap[String(x.comment_id)] ||= []).push(x.user_id)});
+ DB.saveComments((cs||[]).map(r=>({...rayCommentFromRow(r),likes:likeMap[String(r.id)]||[]})));
+ const voteMap={}; (vs||[]).forEach(x=>{(voteMap[String(x.question_id)] ||= {})[x.user_id]=({agree:'yes',disagree:'no',neutral:'mid'})[x.vote]||x.vote});
+ DB.saveVotes(voteMap);
+}
+
+function rayLocalUser(profile, authUser){
+  const u={id:authUser.id,name:profile.full_name||authUser.email?.split('@')[0]||'مستخدم',email:authUser.email||'',bio:profile.bio||'',role:profile.role||'user',avatar:profile.avatar_url||'',verified:false,blocked:false,guest:false,created:authUser.created_at||now(),notify:true};
+  const users=DB.users().filter(x=>x.id!==u.id); users.push(u); DB.saveUsers(users); setSession(u.id); return u;
+}
+async function rayLoadProfile(authUser, fallbackName){
+  let {data,error}=await raySupabase.from('profiles').select('*').eq('id',authUser.id).maybeSingle();
+  if(error) throw error;
+  if(!data){
+    const row={id:authUser.id,username:(authUser.email||'user').split('@')[0]+'_'+authUser.id.slice(0,5),full_name:fallbackName||authUser.user_metadata?.full_name||authUser.email?.split('@')[0]||'مستخدم'};
+    const result=await raySupabase.from('profiles').insert(row).select().single();
+    if(result.error) throw result.error; data=result.data;
+  }
+  return rayLocalUser(data,authUser);
+}
+window.doLogin=async function(e){
+  e.preventDefault();
+  const em=document.getElementById('lemail').value.trim().toLowerCase();
+  const pw=document.getElementById('lpass').value;
+  const {data,error}=await raySupabase.auth.signInWithPassword({email:em,password:pw});
+  if(error){toast('تعذر تسجيل الدخول: '+error.message);return false;}
+  if(!data.user){toast('لم يتم العثور على حساب صالح.');return false;}
+  try{
+    const u=await rayLoadProfile(data.user);
+    await raySyncSocial();
+    toast('مرحباً بك '+u.name+' 👋');
+    location.hash='#/';
+    route();
+  }catch(err){
+    toast('تم تسجيل الدخول لكن تعذر تحميل بيانات الحساب: '+err.message);
+  }
+  return false;
+};
+window.doRegister=async function(e){
+  e.preventDefault();
+  const name=document.getElementById('rname').value.trim();
+  const em=document.getElementById('remail').value.trim().toLowerCase();
+  const pw=document.getElementById('rpass').value;
+  if(name.length<2){toast('اكتب اسماً صحيحاً (حرفان على الأقل).');return false;}
+  if(pw.length<6){toast('كلمة المرور يجب أن تكون 6 أحرف على الأقل.');return false;}
+  const {data,error}=await raySupabase.auth.signUp({
+    email:em,
+    password:pw,
+    options:{data:{full_name:name},emailRedirectTo:location.href.split('#')[0]}
+  });
+  if(error){toast('تعذر إنشاء الحساب: '+error.message);return false;}
+  if(!data.session){
+    toast('تم إنشاء الحساب وإرسال رسالة تأكيد إلى بريدك. افتح الرسالة واضغط رابط التأكيد، ثم ارجع وسجّل الدخول.');
+    location.hash='#/login';
+    return false;
+  }
+  try{
+    const u=await rayLoadProfile(data.user,name);
+    await raySyncSocial();
+    toast('تم إنشاء حسابك بنجاح 🎉');
+    location.hash='#/';
+    route();
+  }catch(err){
+    toast('تم إنشاء الحساب لكن تعذر تجهيز الملف الشخصي: '+err.message);
+  }
+  return false;
+};
+window.googleLogin=async function(){
+  const {error}=await raySupabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0]}});
+  if(error) toast('تعذر الدخول عبر Google: '+error.message);
+};
+// تسجيل الخروج ينهي جلسة Supabase أيضاً، مع إبقاء دخول الضيف المحلي متاحاً.
+window.logout=async function(){
+  try{
+    const {data}=await raySupabase.auth.getSession();
+    if(data?.session){
+      const {error}=await raySupabase.auth.signOut();
+      if(error) throw error;
+    }
+    LS.set('session',null);
+    location.hash='#/';
+    route();
+  }catch(e){
+    toast('تعذر تسجيل الخروج من الخادم: '+e.message);
+  }
+};
+
+raySupabase.auth.onAuthStateChange(async(event,session)=>{
+  if(event==='SIGNED_OUT'){
+    LS.set('session',null);
+    if(location.hash.startsWith('#/profile')) location.hash='#/login';
+  }
+  if(session?.user && event!=='TOKEN_REFRESHED'){
+    try{
+      await rayLoadProfile(session.user);
+      await raySyncSocial();
+      if(location.hash && !location.hash.startsWith('#/login') && !location.hash.startsWith('#/register')) route();
+    }catch(e){console.error('RAY sync:',e);}
+  }
+});
+(async()=>{try{const {data}=await raySupabase.auth.getSession();if(data.session?.user){await rayLoadProfile(data.session.user);await raySyncSocial();if(location.hash)route();}}catch(e){console.error('RAY session:',e);}})();
+window.addEventListener('focus',()=>{if(raySupabase.auth.getSession)raySyncSocial().then(()=>{if(location.hash.startsWith('#/q/'))route();}).catch(e=>console.warn('RAY refresh',e));});
+
+/* ---------- إضافة / تعديل سؤال ---------- */
+function renderAddQuestion(editId){
+  const u=me(); if(!u){ location.hash='#/login'; return; }
+  const q = editId? DB.questions().find(x=>x.id===editId):null;
+  if(editId&&(!q||q.userId!==u.id)){ toast('غير مصرح'); location.hash='#/'; return; }
+  layout('#/add',`<div style="max-width:620px;margin:0 auto">
+    <h2 style="margin-bottom:16px">${q?'✏️ تعديل السؤال':'➕ أضف سؤالاً أو استشارة'}</h2>
+    <div class="card">
+      <form onsubmit="return submitQuestion(event,'${editId||''}')" style="display:flex;flex-direction:column;gap:14px">
+        <input id="qtitle" placeholder="اكتب سؤالك بوضوح..." required maxlength="200" value="${q?esc(q.title):''}">
+        <textarea id="qbody" rows="4" placeholder="وجهة نظرك أو تفاصيل إضافية (اختياري)">${q?esc(q.body):''}</textarea>
+        <select id="qcat">${CATS.map(c=>`<option value="${c.id}" ${q&&q.cat===c.id?'selected':''}>${c.i} ${c.n}</option>`).join('')}</select>
+        <div><label class="muted">صورة مرفقة (اختياري):</label><input id="qimg" type="file" accept="image/*" onchange="previewImg(this)">
+        <img id="imgprev" class="${q&&q.image?'':'hidden'}" style="max-width:100%;border-radius:12px;margin-top:8px" src="${q?.image||''}"></div>
+        <input type="hidden" id="qimgdata" value="${q?.image||''}">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+          <input type="checkbox" id="qanon" ${q&&q.anonymous?'checked':''} style="width:20px;height:20px">
+          <span>النشر مجهولاً (إخفاء اسمي)</span>
+        </label>
+        <button class="btn" type="submit">${q?'حفظ التعديلات':'نشر السؤال 🚀'}</button>
+        <p class="muted" style="text-align:center">💡 النشر مجاني — لا تُمنح نقاط مقابل نشر الأسئلة</p>
+      </form>
+    </div></div>`);
+}
+window.previewImg=function(inp){
+  const f=inp.files[0]; if(!f)return;
+  if(f.size>800*1024){ toast('الصورة كبيرة، الحد 800KB'); inp.value=''; return; }
+  const r=new FileReader(); r.onload=e=>{document.getElementById('qimgdata').value=e.target.result; const p=document.getElementById('imgprev'); p.src=e.target.result; p.classList.remove('hidden');}; r.readAsDataURL(f);
+};
+window.submitQuestion=async function(e,editId){
+ e.preventDefault(); const u=me(); if(!u){location.hash='#/login';return false;}
+ const title=document.getElementById('qtitle').value.trim(), body=document.getElementById('qbody').value.trim(), cat=document.getElementById('qcat').value, anon=document.getElementById('qanon').checked;
+ if(!title||!body){toast('اكتب عنوان السؤال ومحتواه');return false;}
+ const row={user_id:u.id,title,content:body,category:cat,is_anonymous:anon};
+ const result=editId?await raySupabase.from('questions').update(row).eq('id',editId).eq('user_id',u.id).select().single():await raySupabase.from('questions').insert(row).select().single();
+ if(result.error){toast('تعذر حفظ السؤال: '+result.error.message);return false;}
+ await raySyncSocial(); toast(editId?'تم حفظ التعديلات ✓':'تم نشر سؤالك ✓'); location.hash='#/'; return false;
+};
+
+/* ---------- تفاصيل السؤال ---------- */
+function renderQuestion(id){
+  const allQuestions=DB.questions();
+  const q=allQuestions.find(x=>String(x.id)===String(id))
+    || allQuestions.find(x=>String(x.id)===('q'+String(id)))
+    || allQuestions.find(x=>String(x.id).replace(/^q/, '')===String(id));
+  if(!q){ layout('#/', '<div class="card">السؤال غير موجود حالياً. ارجع للرئيسية وحدّث القائمة ثم افتح السؤال من جديد.</div>'); return; }
+  id=String(q.id);
+  q.views=(q.views||0)+1; const qs=DB.questions(); const qi=qs.findIndex(x=>x.id===id); qs[qi]=q; DB.saveQuestions(qs);
+  const cmts=DB.comments().filter(c=>c.qid===id);
+  const sort=LS.get('csort','top');
+  const sorted=[...cmts].sort((a,b)=> sort==='new'? b.at.localeCompare(a.at) : (b.likes.length*2+repliesOf(b.id).length*3) - (a.likes.length*2+repliesOf(a.id).length*3));
+  const best=sorted.filter(c=>c.best)[0];
+  layout('#/', `
+    <a href="#/" class="muted" style="display:inline-block;margin-bottom:14px">← رجوع للرئيسية</a>
+    <div class="card" style="margin-bottom:18px">${questionCardHTML(q,false)}
+      ${best?`<div style="margin-top:14px;padding:12px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(5,150,105,.05));border:1px solid rgba(16,185,129,.35)">
+        🏆 <b>الرأي الأكثر تأييداً:</b> ${esc(best.text.slice(0,140))}${best.text.length>140?'...':''}
+      </div>`:''}
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px">💬 النقاش (${cmts.length})</h3>
+      <div class="sort-row">
+        <button class="${sort==='top'?'on':''}" onclick="LS.set('csort','top');route()">الأكثر تفاعلاً 🔥</button>
+        <button class="${sort==='new'?'on':''}" onclick="LS.set('csort','new');route()">الأحدث 🕐</button>
+      </div>
+      <form onsubmit="return addComment(event,'${id}')" style="display:flex;gap:8px;margin-bottom:18px">
+        <input id="ctext" placeholder="اكتب رأيك بأدب واحترام..." required maxlength="500">
+        <button class="btn" type="submit">إرسال</button>
+      </form>
+      ${sorted.length? sorted.map(c=>commentHTML(c)).join('') : '<p class="muted" style="text-align:center;padding:20px">لا تعليقات بعد — كن أول من يشارك رأيه!</p>'}
+    </div>`);
+}
+function repliesOf(cid){ return DB.comments().filter(c=>c.parent===cid); }
+function commentHTML(c, isReply){
+  const u=me(); const author=userOf(c.userId);
+  const name=c.anonymous?'مستخدم مجهول':(author?author.name:'مستخدم محذوف');
+  const likes=Array.isArray(c.likes)?c.likes:[];
+  const liked=u&&likes.includes(u.id);
+  const owner=me()&&c.userId===me().id;
+  const q=DB.questions().find(x=>x.id===c.qid);
+  const canPick = q && me() && q.userId===me().id && !c.best && !c.parent;
+  return `<div class="comment ${c.best?'best':''}">
+    <div style="display:flex;gap:10px;align-items:flex-start">
+      <span class="avatar" style="width:36px;height:36px;font-size:15px">${c.anonymous?'🕵️':esc(name[0])}</span>
+      <div style="flex:1">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <b style="font-size:14px">${esc(name)}</b><span class="muted">${ago(c.at)}</span>
+          ${c.best?'<span class="badge" style="background:rgba(16,185,129,.15);color:#10b981">🏆 أفضل إجابة</span>':''}
+          <span style="margin-right:auto"></span>
+          ${canPick?`<button class="btn btn-ghost btn-sm" onclick="pickBest('${c.id}')" title="اختيار كأفضل إجابة">🏆</button>`:''}
+          ${owner?`<button class="btn btn-danger btn-sm" onclick="delComment('${c.id}')">🗑️</button>`:''}
+        </div>
+        <p style="margin:6px 0;font-size:14px;line-height:1.8">${esc(c.text)}</p>
+        <div style="display:flex;gap:14px;align-items:center">
+          <button onclick="likeComment('${c.id}')" style="background:none;color:${liked?'var(--primary)':'var(--muted)'};font-weight:700;font-size:13px">👍 ${likes.length}</button>
+          ${!isReply?`<button onclick="replyBox('${c.id}')" style="background:none;color:var(--muted);font-weight:700;font-size:13px">↩️ رد</button>`:''}
+          <button onclick="reportContent('تعليق','${c.id}')" style="background:none;color:var(--muted);font-size:12px">🚩</button>
+        </div>
+        <div id="rb-${c.id}"></div>
+        <div style="margin-right:24px">${repliesOf(c.id).map(r=>commentHTML(r,true)).join('')}</div>
+      </div>
+    </div>
+  </div>`;
+}
+window.likeComment=async function(cid){
+  const u=me(); if(!u){location.hash='#/login';return;}
+  const c=DB.comments().find(x=>String(x.id)===String(cid)); if(!c){toast('التعليق غير موجود');return;}
+  const liked=(c.likes||[]).includes(u.id);
+  const result=liked?await raySupabase.from('likes').delete().eq('comment_id',Number(cid)).eq('user_id',u.id):await raySupabase.from('likes').insert({comment_id:Number(cid),user_id:u.id});
+  if(result.error){toast('تعذر حفظ الإعجاب: '+result.error.message);return;}
+  await raySyncSocial(); if(!liked)addXP(c.userId,2,'إعجاب برأيك'); route();
+};
+window.replyBox=function(cid){
+  const d=document.getElementById('rb-'+cid);
+  d.innerHTML=`<form onsubmit="return addComment(event,'${DB.comments().find(c=>c.id===cid).qid}','${cid}')" style="display:flex;gap:8px;margin-top:8px">
+    <input name="rtext" placeholder="اكتب ردك..." required maxlength="500"><button class="btn btn-sm">رد</button></form>`;
+};
+window.addComment=async function(e,qid,parent){
+ e.preventDefault(); const u=me(); if(!u){location.hash='#/login';return false;}
+ const inp=parent?e.target.querySelector('[name=rtext]'):document.getElementById('ctext'); const content=inp.value.trim(); if(!content)return false;
+ if(!DB.questions().some(q=>String(q.id)===String(qid))){toast('السؤال غير موجود؛ حدّث الصفحة وحاول مجدداً');return false;}
+ const {error}=await raySupabase.from('comments').insert({question_id:Number(qid),user_id:u.id,content,parent_id:parent?Number(parent):null});
+ if(error){toast('تعذر نشر التعليق: '+error.message);return false;}
+ await raySyncSocial(); toast(parent?'تم إرسال الرد ✓':'تم نشر تعليقك ✓'); route(); return false;
+};
+window.pickBest=async function(cid){
+ const c=DB.comments().find(x=>String(x.id)===String(cid)); const q=c&&DB.questions().find(x=>String(x.id)===String(c.qid));
+ if(!c||!q||q.userId!==me()?.id){toast('اختيار أفضل إجابة متاح لصاحب السؤال فقط');return;}
+ const {error:clearError}=await raySupabase.from('comments').update({is_best:false}).eq('question_id',Number(c.qid));
+ if(clearError){toast('تعذر تحديث أفضل إجابة: '+clearError.message);return;}
+ const {error}=await raySupabase.from('comments').update({is_best:true}).eq('id',Number(cid));
+ if(error){toast('تعذر اختيار أفضل إجابة: '+error.message);return;}
+ await raySyncSocial(); addXP(c.userId,25,'رأيك اختير كأفضل إجابة'); notify(c.userId,'🏆 أفضل إجابة','رأيك اختير كأفضل إجابة في نقاش! +25 نقطة','#/q/'+c.qid); toast('تم اختيار أفضل إجابة ✓'); route();
+};
+window.delComment=async function(cid){
+ const c=DB.comments().find(x=>String(x.id)===String(cid)); if(!c||c.userId!==me()?.id){toast('لا تملك صلاحية حذف هذا التعليق');return;}
+ if(!confirm('حذف التعليق؟'))return;
+ const {error}=await raySupabase.from('comments').delete().eq('id',Number(cid)).eq('user_id',me().id);
+ if(error){toast('تعذر حذف التعليق: '+error.message);return;}
+ await raySyncSocial(); toast('تم الحذف'); route();
+};
+
+/* ---------- المستشارون ---------- */
+function advisorCardHTML(a){
+  const avg=a.ratingCount?(a.totalRating/a.ratingCount).toFixed(1):'جديد';
+  return `<a class="card" href="#/advisor/${a.id}" style="display:block">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
+      <span class="avatar avatar-lg">${a.avatar}</span>
+      <div><b style="font-size:16px">${esc(a.name)}</b> ${a.verified?'<span title="موثّق">✅</span>':''}
+        <div class="muted">${SPEC[a.spec]}</div>
+        <div class="muted">📋 ${a.consults} استشارة · ⭐ ${avg}</div>
+      </div>
+    </div>
+    <p class="muted" style="font-size:13px;line-height:1.7">${esc(a.bio)}</p>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <span class="btn btn-sm" style="flex:1;text-align:center">عرض الملف</span>
+      <span class="btn btn-ghost btn-sm" style="flex:1;text-align:center" onclick="event.preventDefault();location.hash='#/chat/${a.id}'">${a.open?'💬 مراسلة':'🔕 متوقف'}</span>
+    </div>
+  </a>`;
+}
+function renderAdvisors(){
+  layout('#/advisors',`<h2 style="margin-bottom:4px">🎓 المستشارون المتخصصون</h2>
+  <p class="muted" style="margin-bottom:16px">أفضل 10 مستشارين موثّقين — التحقق من المؤهلات إلزامي للتخصصات الحساسة.</p>
+  ${me()?`<a class="btn btn-ghost" style="margin-bottom:16px;display:inline-block" onclick="becomeAdvisor()">📜 انضم كمستشار</a>`:''}
+  <div class="grid grid-2">${DB.advisors().map((a,i)=>`
+    <div><div class="lb-row" style="margin-bottom:8px"><span class="lb-rank ${i<3?'r'+(i+1):''}">${i+1}</span><b style="font-size:13px" class="muted">${SPEC[a.spec]}</b></div>${advisorCardHTML(a)}</div>`).join('')}
+  </div>`);
+}
+window.becomeAdvisor=function(){
+  let u=me();
+  if(!u.verified){
+    openModal(`<h3 style="margin-bottom:10px">📜 طلب انضمام كمستشار</h3>
+    <p class="muted" style="line-height:1.9;margin-bottom:12px">لمنحك صفة مستشار في التخصصات المهنية (نفسي، قانوني، مالي...) يجب التحقق من مؤهلاتك من الإدارة أولاً.</p>
+    <form onsubmit="return applyAdvisor(event)" style="display:flex;flex-direction:column;gap:10px">
+      <select id="aspec">${SPEC.map((s,i)=>`<option value="${i}">${s}</option>`).join('')}</select>
+      <textarea id="acv" rows="3" placeholder="المؤهلات والشهادات..." required></textarea>
+      <button class="btn">إرسال طلب التحقق</button>
+    </form>`);
+  }
+};
+window.applyAdvisor=function(e){
+  e.preventDefault();
+  const r=DB.reports(); r.unshift({id:uid(),by:me().id,type:'advisor_apply',refId:document.getElementById('aspec').value,reason:document.getElementById('acv').value,status:'open',at:now()});
+  DB.saveReports(r); closeModal(); toast('أُرسل طلبك — ستتم مراجعته من الإدارة ✓'); return false;
+};
+function renderAdvisor(id){
+  const allAdvisors=DB.advisors();
+  const a=allAdvisors.find(x=>String(x.id)===String(id))
+    || allAdvisors.find(x=>String(x.id)===('adv'+String(id)))
+    || allAdvisors.find(x=>String(x.id).replace(/^adv/, '')===String(id));
+  if(!a){ layout('#/advisors','<div class="card">المستشار غير موجود حالياً. ارجع لقائمة المستشارين وافتح الملف من جديد.</div>'); return; }
+  id=String(a.id);
+  const u=me(); const myRating=DB.ratings()[u?.id+'_'+id]||0;
+  layout('#/advisors',`<a href="#/advisors" class="muted">← كل المستشارين</a>
+  <div class="card" style="margin-top:12px">
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <span class="avatar avatar-lg">${a.avatar}</span>
+      <div style="flex:1;min-width:200px">
+        <h2>${esc(a.name)} ${a.verified?'<span title="موثّق">✅</span>':''}</h2>
+        <div class="tag" style="margin:6px 0">${SPEC[a.spec]}</div>
+        <div class="muted">📋 ${a.consults} استشارة · ${a.open?'<span style="color:var(--success)">● يستقبل رسائل</span>':'<span style="color:var(--danger)">● متوقف مؤقتاً</span>'}</div>
+      </div>
+      <div style="text-align:center"><div style="font-size:30px;font-weight:900;color:var(--gold)">${a.ratingCount?(a.totalRating/a.ratingCount).toFixed(1):'—'}</div><div class="muted">⭐ ${a.ratingCount} تقييم</div></div>
+    </div>
+    <p style="margin:14px 0;line-height:1.9">${esc(a.bio)}</p>
+    ${a.cv?`<p class="muted">🎓 المؤهلات: ${esc(a.cv)}</p>`:''}
+    <div style="margin:16px 0">
+      <b>قيّم المستشار:</b>
+      <div style="font-size:26px;margin-top:6px;direction:ltr;text-align:right">${[1,2,3,4,5].map(s=>`<span class="star" style="color:${s<=myRating?'var(--gold)':'var(--border)'}" onclick="rateAdvisor('${id}',${s})">★</span>`).join('')}</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" onclick="location.hash='#/chat/${id}'" ${!a.open?'disabled style="opacity:.5"':''}>💬 مراسلة خاصة</button>
+      ${u&&(u.id===a.userId||u.role==='admin')?`<button class="btn btn-ghost" onclick="toggleAdvisorOpen('${id}')">${a.open?'🔕 إيقاف استقبال الرسائل':'🔔 تفعيل استقبال الرسائل'}</button>`:''}
+    </div>
+  </div>
+  <h3 style="margin:20px 0 12px">📋 استشارات أجاب عنها</h3>
+  ${DB.consults().filter(c=>c.answers.some(an=>an.by===id)).map(c=>`
+    <div class="card" style="margin-bottom:12px"><b>${esc(c.title)}</b>
+      <p class="muted" style="margin:8px 0;line-height:1.8">${esc(c.answers.find(an=>an.by===id).text.slice(0,180))}...</p>
+      <span class="badge">👍 ${c.answers.find(an=>an.by===id).likes}</span>
+    </div>`).join('')||'<p class="muted">لا إجابات علنية بعد.</p>'}`);
+}
+window.rateAdvisor=function(id,stars){
+  let u=me(); if(!u){ location.hash='#/login'; return; }
+  const key=u.id+'_'+id; const r=DB.ratings(); const a=DB.advisors();
+  if(r[key]){ toast('قيّمت هذا المستشار مسبقاً (حماية من التلاعب)'); return; }
+  r[key]=stars; DB.saveRatings(r);
+  const ad=a.find(x=>x.id===id); ad.totalRating+=stars; ad.ratingCount++; DB.saveAdvisors(a);
+  toast(`شكراً لتقييمك (${stars}⭐)`); route();
+};
+window.toggleAdvisorOpen=function(id){ const a=DB.advisors(); const x=a.find(y=>y.id===id); x.open=!x.open; DB.saveAdvisors(a); route(); };
+
+/* ---------- الاستشارات ---------- */
+function renderConsults(){
+  const u=me(); const cs=[...DB.consults()].sort((a,b)=>b.created.localeCompare(a.created));
+  layout('#/consult',`<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+    <h2>📋 قسم الاستشارات</h2>
+    ${u?`<button class="btn" onclick="newConsult()">➕ استشارة جديدة</button>`:`<a class="btn" href="#/login">سجّل لإضافة استشارة</a>`}
+  </div>
+  <div class="grid grid-2">${cs.map(c=>consultCardHTML(c)).join('')||'<div class="card">لا استشارات بعد.</div>'}</div>`);
+}
+function consultCardHTML(c){
+  const a = c.anonymous?{name:'مستخدم مجهول'}:userOf(c.userId)||{name:'مستخدم محذوف'};
+  const cat=catOf(c.cat);
+  return `<div class="card">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+      <span class="avatar" style="width:36px;height:36px;font-size:15px">${c.anonymous?'🕵️':esc(a.name[0])}</span>
+      <div><b>${c.anonymous?'مستخدم مجهول':esc(a.name)}</b><div class="muted">${ago(c.created)} · ${cat.i} ${cat.n}</div></div>
+    </div>
+    <b style="font-size:16px">${esc(c.title)}</b>
+    <p class="muted" style="margin:8px 0;line-height:1.8">${esc(c.body)}</p>
+    <div class="muted" style="margin-bottom:10px">💬 ${c.answers.length} نصيحة</div>
+    ${c.answers.slice(0,2).map(an=>{
+      const adv=DB.advisors().find(x=>x.id===an.by);
+      return `<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <b style="font-size:13px;color:var(--primary)">${adv?adv.avatar+' '+esc(adv.name):'مستشار'}</b>
+          <span style="display:flex;gap:8px;align-items:center">
+            <button onclick="likeAnswer('${c.id}','${an.id}')" style="background:none;font-weight:700;color:var(--muted);font-size:13px">👍 ${an.likes}</button>
+            <button onclick="reportContent('نصيحة','${an.id}')" style="background:none;color:var(--muted);font-size:11px">🚩</button>
+          </span>
+        </div>
+        <p style="font-size:14px;line-height:1.8">${esc(an.text.slice(0,200))}${an.text.length>200?'...':''}</p>
+      </div>`}).join('')}
+    ${c.answers.length>2?`<div class="muted">+${c.answers.length-2} نصائح أخرى</div>`:''}
+    ${me()?`<form onsubmit="return answerConsult(event,'${c.id}')" style="display:flex;gap:8px;margin-top:10px">
+      <input name="ans" placeholder="شارك نصيحتك..." required maxlength="600"><button class="btn btn-sm">نصيحة</button></form>`:''}
+  </div>`;
+}
+window.newConsult=function(){
+  let u=me(); if(!u){ location.hash='#/login'; return; }
+  openModal(`<h3 style="margin-bottom:12px">📋 استشارة جديدة (+15 نقطة)</h3>
+  <form onsubmit="return submitConsult(event)" style="display:flex;flex-direction:column;gap:10px">
+    <input id="ctitle" placeholder="عنوان المشكلة" required maxlength="120">
+    <textarea id="cbody" rows="4" placeholder="اشرح مشكلتك بالتفصيل..." required></textarea>
+    <select id="ccat">${CATS.map(c=>`<option value="${c.id}">${c.i} ${c.n}</option>`).join('')}</select>
+    <label style="display:flex;gap:10px;align-items:center;cursor:pointer"><input type="checkbox" id="canon" style="width:20px;height:20px">النشر مجهولاً</label>
+    <button class="btn">نشر الاستشارة</button>
+  </form>`);
+};
+window.submitConsult=function(e){
+  e.preventDefault(); const u=me();
+  const cs=DB.consults();
+  const last=cs.filter(c=>c.userId===u.id).pop();
+  if(last && (Date.now()-new Date(last.created))<60000){ toast('انتظر دقيقة بين كل استشارة ⏳'); return false; }
+  cs.unshift({id:uid(),userId:u.id,title:document.getElementById('ctitle').value.trim(),body:document.getElementById('cbody').value.trim(),cat:document.getElementById('ccat').value,anonymous:document.getElementById('canon').checked,created:now(),advisorId:null,status:'open',answers:[]});
+  DB.saveConsults(cs); addXP(u.id,15,'نشر استشارة'); closeModal(); toast('نُشرت استشارتك ✓ (+15 نقطة)'); route(); return false;
+};
+window.answerConsult=function(e,cid){
+  e.preventDefault(); const u=me();
+  const text=e.target.querySelector('[name=ans]').value.trim(); if(!text)return false;
+  const cs=DB.consults(); const c=cs.find(x=>x.id===cid);
+  // إجابة مفيدة = أكثر من 80 حرفاً → +10، قصيرة → +3 نقاش
+  const useful=text.length>=80;
+  c.answers.push({id:uid(),by:u.id,text,likes:0,at:now()}); DB.saveConsults(cs);
+  addXP(u.id,useful?10:3,useful?'إجابة مفيدة':'مشاركة في نقاش');
+  if(c.userId!==u.id) notify(c.userId,'نصيحة جديدة',`${u.name} أضاف نصيحة لاستشارتك`,'#/consult');
+  toast(useful?'نصيحتك مفيدة ✓ (+10 نقاط)':'شكراً لمشاركتك ✓ (+3 نقاط)'); route(); return false;
+};
+window.likeAnswer=function(cid,aid){
+  let u=me(); if(!u){ location.hash='#/login'; return; }
+  const key=u.id+'_a_'+aid;
+  if(DB.flags()[key]){ toast('أعجبت بهذه النصيحة مسبقاً'); return; }
+  const cs=DB.consults(); const an=cs.find(c=>c.id===cid).answers.find(a=>a.id===aid);
+  an.likes++; DB.saveConsults(cs);
+  let f=DB.flags(); f[key]=1; DB.saveFlags(f);
+  addXP(an.by,2,'إعجاب بنصيحتك'); route();
+};
+
+/* ---------- المحادثات ---------- */
+function renderChats(){
+  const u=me(); if(!u){ location.hash='#/login'; return; }
+  const my=DB.chats().filter(c=>c.userId===u.id);
+  const blocked=me().blockedUsers||[];
+  layout('#/chats',`<h2 style="margin-bottom:16px">💬 المحادثات الخاصة</h2>
+  ${my.length? my.map(c=>{const a=DB.advisors().find(x=>x.id===c.advisorId);const last=c.messages[c.messages.length-1];
+    return `<a class="lb-row" href="#/chat/${c.advisorId}">
+      <span class="avatar">${a?a.avatar:'👤'}</span>
+      <div style="flex:1"><b>${a?esc(a.name):'مستشار'}</b><div class="muted">${esc((last?.text||'').slice(0,50))}</div></div>
+      <span class="muted">${last?ago(last.at):''}</span></a>`}).join('')
+  : `<div class="card" style="text-align:center;padding:30px"><p class="muted">لا محادثات بعد — ابدأ محادثة مع مستشار من <a href="#/advisors" style="color:var(--primary);font-weight:700">صفحة المستشارين</a></p></div>`}
+  ${blocked.length?`<h3 style="margin:20px 0 10px">🚫 محظورون</h3>${blocked.map(b=>{const bu=userOf(b);return bu?`<div class="lb-row"><span class="avatar">${esc(bu.name[0])}</span><b>${esc(bu.name)}</b><button class="btn btn-ghost btn-sm" style="margin-right:auto" onclick="unblockUser('${b}')">إلغاء الحظر</button></div>`:''}).join('')}`:''}`);
+}
+function renderChat(advId){
+  const u=me(); if(!u){ location.hash='#/login'; return; }
+  const a=DB.advisors().find(x=>x.id===advId); if(!a){ location.hash='#/chats'; return; }
+  let ch=DB.chats().find(c=>c.userId===u.id&&c.advisorId===advId);
+  if(!ch){ if(!a.open){ toast('هذا المستشار لا يستقبل رسائل حالياً'); location.hash='#/advisor/'+advId; return; }
+    ch={id:uid(),userId:u.id,advisorId:advId,messages:[]}; const cs=DB.chats(); cs.push(ch); DB.saveChats(cs); }
+  layout('#/chats',`<a href="#/chats" class="muted">← المحادثات</a>
+  <div class="card" style="margin-top:12px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <a href="#/advisor/${a.id}"><span class="avatar">${a.avatar}</span></a>
+      <div><b>${esc(a.name)}</b><div class="muted" style="font-size:12px">${SPEC[a.spec]} · ${a.open?'<span style="color:var(--success)">● متصل</span>':'<span style="color:var(--muted)">● غير متاح'}</div></div>
+      <span style="margin-right:auto;display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="reportContent('مستخدم','${a.id}')">🚩</button>
+        <button class="btn btn-danger btn-sm" onclick="blockUser('${a.id}')">🚫</button>
+      </span>
+    </div>
+    <div class="chat-box" id="cbox">
+      ${ch.messages.length? ch.messages.map(m=>`<div class="msg ${m.from==='u'?'me':'them'}">${esc(m.text)}<span class="t">${new Date(m.at).toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')
+      :`<p class="muted" style="text-align:center;align-self:center;margin:auto">ابدأ المحادثة بأدب واحترام 🤝<br><small>(في النسخة المتصلة بالخادم يظهر رد المستشار الحقيقي هنا)</small></p>`}
+    </div>
+    <form class="chat-input" onsubmit="return sendMsg(event,'${advId}')">
+      <input id="mtext" placeholder="اكتب رسالتك..." autocomplete="off" required maxlength="1000">
+      <button class="btn" type="submit">إرسال</button>
+    </form>
+  </div>`);
+  const box=document.getElementById('cbox'); box.scrollTop=box.scrollHeight;
+}
+window.sendMsg=function(e,advId){
+  e.preventDefault(); const u=me();
+  const text=document.getElementById('mtext').value.trim(); if(!text)return false;
+  const cs=DB.chats(); const ch=cs.find(c=>c.userId===u.id&&c.advisorId===advId);
+  ch.messages.push({from:'u',text,at:now()}); DB.saveChats(cs);
+  // رد تلقائي توضيحي في الوضع المحلي (بدون خادم)
+  setTimeout(()=>{ const cs2=DB.chats(); const ch2=cs2.find(c=>c.userId===u.id&&c.advisorId===advId);
+    if(ch2){ ch2.messages.push({from:'adv',text:'شكراً لتواصلك! هذه نسخة محلية تجريبية — عند ربط التطبيق بخادم حقيقي سيتلقى المستشار رسالتك ويرد عليك مباشرة.',at:now()}); DB.saveChats(cs2); if(location.hash==='#/chat/'+advId) route(); } },1200);
+  route(); return false;
+};
+window.blockUser=function(id){ let u=me(); u.blockedUsers=u.blockedUsers||[]; u.blockedUsers.push(id); const us=DB.users(); const i=us.findIndex(x=>x.id===u.id); us[i]=u; DB.saveUsers(us); toast('تم الحظر 🚫'); location.hash='#/chats'; };
+window.unblockUser=function(id){ let u=me(); u.blockedUsers=(u.blockedUsers||[]).filter(x=>x!==id); const us=DB.users(); us[us.findIndex(x=>x.id===u.id)]=u; DB.saveUsers(us); toast('تم إلغاء الحظر'); route(); };
+
+/* ---------- الإشعارات ---------- */
+function renderNotifs(){
+  const u=me(); if(!u){ location.hash='#/login'; return; }
+  const ns=DB.notifs().filter(n=>n.userId===u.id);
+  DB.saveNotifs(DB.notifs().map(n=>n.userId===u.id?{...n,read:true}:n));
+  layout('#/notifs',`<h2 style="margin-bottom:16px">🔔 الإشعارات</h2>
+  ${ns.length? ns.map(n=>`<a class="rep-card" href="${n.link}" style="display:block;${n.read?'':'border-color:var(--primary)'}">
+    <b>${esc(n.title)}</b><p class="muted" style="margin-top:4px">${esc(n.body)}</p><div class="muted" style="margin-top:4px">${ago(n.at)}</div></a>`).join('')
+  :'<div class="card" style="text-align:center;padding:30px"><p class="muted">لا إشعارات جديدة 🎉</p></div>'}`);
+}
+
+/* ---------- الملف الشخصي ---------- */
+function renderProfile(){
+  const u=me(); if(!u){ location.hash='#/login'; return; }
+  const xp=xpOf(u.id), lv=levelOf(xp);
+  const myq=DB.questions().filter(q=>q.userId===u.id);
+  const myc=DB.comments().filter(c=>c.userId===u.id);
+  const pct=lv.next?Math.round((xp-lv.cur)/(lv.next-lv.cur)*100):100;
+  layout('#/profile',`<div style="max-width:620px;margin:0 auto">
+  <div class="card" style="text-align:center">
+    <label style="cursor:pointer"><span class="avatar avatar-lg" style="margin:0 auto 10px">${u.avatar?`<img src="${u.avatar}">`:esc(u.name[0])}</span>
+    <input type="file" accept="image/*" style="display:none" onchange="changeAvatar(this)"></label>
+    <h2>${esc(u.name)} ${u.verified?'<span title="موثّق">✅</span>':''} ${u.guest?'<span class="badge">ضيف</span>':''}</h2>
+    <div class="tag" style="margin:8px 0">${lv.name} 🎖️</div>
+    <div class="xpbar" style="max-width:300px;margin:10px auto"><i style="width:${pct}%"></i></div>
+    <div class="muted">${xp} XP ${lv.next?`— المتبقي ${lv.next-xp} للمستوى التالي`:''}</div>
+    <p class="muted" style="margin-top:10px">${esc(u.bio||'لا نبذة بعد')}</p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="editProfile()">✏️ تعديل الحساب</button>
+      ${u.guest?'<button class="btn" onclick="location.hash=\'#/register\'">⭐ تحويل إلى حساب دائم</button>':''}
+      <button class="btn btn-danger" onclick="logout()">🚪 تسجيل الخروج</button>
+    </div>
+  </div>
+  <div class="stat-grid" style="margin-top:16px">
+    <div class="stat"><b>${myq.length}</b><span class="muted">سؤال</span></div>
+    <div class="stat"><b>${myc.length}</b><span class="muted">تعليق</span></div>
+    <div class="stat"><b>${xp}</b><span class="muted">نقطة خبرة</span></div>
+  </div>
+  <h3 style="margin:22px 0 12px">أسئلتي</h3>
+  <div class="card">${myq.length?myq.map(q=>questionCardHTML(q,true)).join(''):'<p class="muted" style="text-align:center">لم تنشر أسئلة بعد</p>'}</div>
+  </div>`);
+}
+window.changeAvatar=function(inp){
+  const f=inp.files[0]; if(!f)return;
+  if(f.size>500*1024){ toast('الصورة كبيرة'); return; }
+  const r=new FileReader(); r.onload=e=>{ const us=DB.users(); const u=us.find(x=>x.id===me().id); u.avatar=e.target.result; DB.saveUsers(us); toast('تم تحديث صورتك ✓'); route(); }; r.readAsDataURL(f);
+};
+window.editProfile=function(){
+  const u=me();
+  openModal(`<h3 style="margin-bottom:12px">✏️ تعديل الحساب</h3>
+  <form onsubmit="return saveProfile(event)" style="display:flex;flex-direction:column;gap:10px">
+    <input id="pname" value="${esc(u.name)}" required maxlength="40">
+    <textarea id="pbio" rows="3" placeholder="نبذة تعريفية...">${esc(u.bio)}</textarea>
+    <input id="ppass" type="password" placeholder="كلمة مرور جديدة (اتركها فارغة للإبقاء)">
+    <button class="btn">حفظ</button>
+  </form>`);
+};
+window.saveProfile=function(e){
+  e.preventDefault(); const us=DB.users(); const u=us.find(x=>x.id===me().id);
+  u.name=document.getElementById('pname').value.trim();
+  u.bio=document.getElementById('pbio').value.trim();
+  const p=document.getElementById('ppass').value;
+  if(p){ if(p.length<6){ toast('كلمة المرور قصيرة'); return false; } u.pass=hash(p); }
+  DB.saveUsers(us); closeModal(); toast('تم الحفظ ✓'); route(); return false;
+};
+
+/* ---------- المتصدرون ---------- */
+function renderLeaderboard(){
+  const mode=LS.get('lbmode','all');
+  let entries=[];
+  if(mode==='all'){ entries=Object.entries(LS.get('xp',{})); }
+  else { const key=mode==='week'?currentWeek():currentMonth(); entries=Object.entries(LS.get('lb',{})).map(([id,h])=>[id,h[key]||0]).filter(x=>x[1]>0); }
+  entries.sort((a,b)=>b[1]-a[1]);
+  layout('#/leaderboard',`<h2 style="margin-bottom:16px">👑 لوحة المتصدرين</h2>
+  <div class="sort-row">
+    <button class="${mode==='all'?'on':''}" onclick="LS.set('lbmode','all');route()">الكل ⭐</button>
+    <button class="${mode==='week'?'on':''}" onclick="LS.set('lbmode','week');route()">أسبوعي 📅</button>
+    <button class="${mode==='month'?'on':''}" onclick="LS.set('lbmode','month');route()">شهري 🗓️</button>
+  </div>
+  ${entries.length? entries.slice(0,20).map(([id,x],i)=>{
+    const u=userOf(id); const lv=levelOf(x);
+    return `<div class="lb-row"><span class="lb-rank ${i<3?'r'+(i+1):''}">${i+1}</span>
+      <span class="avatar">${u&&u.avatar?`<img src="${u.avatar}">`:u?esc(u.name[0]):'👤'}</span>
+      <div style="flex:1"><b>${u?esc(u.name):'مستخدم'}</b><div class="muted">${lv.name}</div></div>
+      <b style="color:var(--primary)">${x} XP</b></div>`}).join('')
+  :'<div class="card" style="text-align:center;padding:30px"><p class="muted">لا نقاط مسجلة في هذه الفترة بعد — كن الأول! 🔥</p></div>'}
+  <div class="card" style="margin-top:16px"><h3 style="margin-bottom:10px">🎖️ نظام المستويات</h3>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">${LEVELS.map((l,i)=>`<span class="badge">${'🥉🥈🥇🎖️💎👑🔥'[i]} ${l}</span>`).join('')}</div></div>`);
+}
+
+/* ---------- الإعدادات ---------- */
+function renderSettings(){
+  const u=me();
+  layout('#/settings',`<div style="max-width:560px;margin:0 auto"><h2 style="margin-bottom:16px">⚙️ الإعدادات</h2>
+  <div class="card" style="display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div><b>الوضع الداكن</b><div class="muted">تفعيل المظهر الليلي</div></div>
+      <label class="switch"><input type="checkbox" ${document.documentElement.dataset.theme==='dark'?'checked':''} onchange="toggleTheme()"><i></i></label></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><div><b>الإشعارات</b><div class="muted">تنبيهات التعليقات والرسائل</div></div>
+      <label class="switch"><input type="checkbox" ${u&&u.notify?'checked':''} onchange="toggleNotify(this)"><i></i></label></div>
+    <hr style="border:none;border-top:1px solid var(--border)">
+    <div><b>🔒 الخصوصية</b><p class="muted" style="margin-top:6px;line-height:1.8">بياناتك محفوظة محلياً على جهازك في هذه النسخة. في النسخة المتصلة بالخادم تُطبق قواعد حماية صارمة تمنع أي وصول غير مصرح به لمحادثاتك وبياناتك، ومفاتيح الخدمات السرية تبقى على الخادم وليس في كود الواجهة.</p></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn btn-ghost" href="#/support">🛟 الدعم والإبلاغ</a>
+      <button class="btn btn-danger" onclick="if(confirm('سيتم مسح جميع بيانات التطبيق من جهازك. متابعة؟')){localStorage.clear();location.reload()}">🗑️ مسح بياناتي</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px"><b>📘 دليل النشر الحقيقي</b>
+    <p class="muted" style="margin-top:8px;line-height:2">هذه النسخة تعمل فوراً بدون خادم (قاعدة بيانات محلية). للنشر العام متعدد المستخدمين والمحادثات الحقيقية، اربط التطبيق بـ <b>Supabase</b> (مجاني) أو <b>Firebase</b>:<br>
+    1) أنشئ مشروعاً مجانياً.<br>
+    2) انسخ مفاتيح العميل (آمنة للنشر) وضعها في ملف إعدادات — أما مفاتيح الخدمة السرية فتبقى في Server/Cloud Functions فقط.<br>
+    3) طبّق الجداول: users, questions, categories, votes, comments, consultations, advisors, messages, notifications, xp, ratings, reports.<br>
+    4) فعّل RLS (قواعد أمان الصفوف) بحيث لا يقرأ أحد رسائل غيره.<br>
+    5) استبدل دوال DB.* في هذا الملف بنداءات الـ API.</p>
+  </div></div>`);
+}
+window.toggleNotify=function(cb){ const us=DB.users(); const u=us.find(x=>x.id===me().id); u.notify=cb.checked; DB.saveUsers(us); toast(cb.checked?'الإشعارات مفعّلة':'الإشعارات متوقفة'); };
+
+/* ---------- الدعم ---------- */
+function renderSupport(){
+  layout('#/support',`<div style="max-width:560px;margin:0 auto"><h2 style="margin-bottom:16px">🛟 الإبلاغ والدعم</h2>
+  <div class="card">
+    <h3 style="margin-bottom:10px">إرسال بلاغ أو استفسار</h3>
+    <form onsubmit="return submitSupport(event)" style="display:flex;flex-direction:column;gap:10px">
+      <select id="stype"><option>بلاغ عن محتوى</option><option>مشكلة تقنية</option><option>طلب استرجاع حساب</option><option>اقتراح</option><option>أخرى</option></select>
+      <textarea id="sbody" rows="4" placeholder="اكتب التفاصيل..." required></textarea>
+      <button class="btn">إرسال</button>
+    </form>
+  </div></div>`);
+}
+window.submitSupport=function(e){
+  e.preventDefault();
+  const r=DB.reports(); r.unshift({id:uid(),by:me()?.id||'guest',type:'support',refId:'',reason:document.getElementById('stype').value+': '+document.getElementById('sbody').value.trim(),status:'open',at:now()});
+  DB.saveReports(r); toast('وصلتنا رسالتك — سنرد قريباً ✓'); location.hash='#/'; return false;
+};
+
+/* ---------- لوحة الإدارة ---------- */
+function renderAdmin(){
+  if(!isAdmin()){ layout('#/', '<div class="card" style="text-align:center;padding:40px"><h3>⛔ صلاحيات الإدارة فقط</h3><p class="muted" style="margin-top:8px">جرّب: admin@ray.app / rayadmin123</p></div>'); return; }
+  const us=DB.users(), qs=DB.questions(), cs=DB.comments(), rp=DB.reports(), ad=DB.advisors();
+  const tab = LS.get('admintab','stats');
+  let body='';
+  if(tab==='stats'){
+    body=`<h3 style="margin:18px 0 12px">📊 إحصائيات التطبيق</h3><div class="stat-grid">
+      <div class="stat"><b>${us.length}</b><span class="muted">مستخدم</span></div>
+      <div class="stat"><b>${qs.length}</b><span class="muted">سؤال</span></div>
+      <div class="stat"><b>${cs.length}</b><span class="muted">تعليق</span></div>
+      <div class="stat"><b>${DB.consults().length}</b><span class="muted">استشارة</span></div>
+      <div class="stat"><b>${DB.chats().length}</b><span class="muted">محادثة</span></div>
+      <div class="stat"><b>${rp.filter(r=>r.status==='open').length}</b><span class="muted">بلاغ مفتوح</span></div>
+    </div>`;
+  } else if(tab==='users'){
+    body=`<h3 style="margin:18px 0 12px">👥 إدارة المستخدمين</h3>
+    <table class="adm"><tr><th>الاسم</th><th>البريد</th><th>الحالة</th><th></th></tr>
+    ${us.map(u=>`<tr><td>${esc(u.name)} ${u.role==='admin'?'<span class="badge">admin</span>':''}</td><td class="muted">${esc(u.email||'—')}</td>
+    <td>${u.blocked?'<span style="color:var(--danger)">محظور</span>':'نشط'}</td>
+    <td>${u.role!=='admin'?`<button class="btn ${u.blocked?'btn-ghost':'btn-danger'} btn-sm" onclick="adminToggleBlock('${u.id}')">${u.blocked?'فك الحظر':'حظر'}</button>`:''}</td></tr>`).join('')}</table>`;
+  } else if(tab==='content'){
+    body=`<h3 style="margin:18px 0 12px">📝 إدارة الأسئلة والتعليقات</h3>
+    ${qs.map(q=>`<div class="rep-card" style="display:flex;gap:10px;align-items:center"><div style="flex:1"><b>${esc(q.title)}</b><div class="muted">${catOf(q.cat).n} · ${ago(q.created)}</div></div>
+    <a class="btn btn-ghost btn-sm" href="#/q/${q.id}">عرض</a><button class="btn btn-danger btn-sm" onclick="delQuestion('${q.id}')">🗑️</button></div>`).join('')}
+    <h3 style="margin:18px 0 12px">التعليقات الأخيرة</h3>
+    ${cs.slice(0,20).map(c=>`<div class="rep-card" style="display:flex;gap:10px;align-items:center"><div style="flex:1" class="muted">${esc(c.text.slice(0,80))}</div>
+    <button class="btn btn-danger btn-sm" onclick="delComment('${c.id}')">🗑️</button></div>`).join('')}`;
+  } else if(tab==='cats'){
+    body=`<h3 style="margin:18px 0 12px">🗂️ إدارة التصنيفات</h3>
+    <table class="adm"><tr><th>التصنيف</th><th>الأسئلة</th></tr>
+    ${CATS.map(c=>`<tr><td>${c.i} ${c.n}</td><td>${qs.filter(q=>q.cat===c.id).length}</td></tr>`).join('')}</table>
+    <p class="muted" style="margin-top:10px">التصنيفات الثابتة مضمّنة في الكود — يمكن نقلها للجداول عند الربط بالخادم.</p>`;
+  } else if(tab==='advisors'){
+    const apps=rp.filter(r=>r.type==='advisor_apply');
+    body=`<h3 style="margin:18px 0 12px">🎓 طلبات المستشارين (${apps.filter(a=>a.status==='open').length})</h3>
+    ${apps.map(ap=>`<div class="rep-card"><b>${SPEC[+ap.refId]||''}</b><p class="muted" style="margin:6px 0">${esc(ap.reason)}</p>
+    <div style="display:flex;gap:8px;margin-top:8px">
+    ${ap.status==='open'?`<button class="btn btn-sm" onclick="adminApproveAdv('${ap.id}')">✅ قبول وتوثيق</button><button class="btn btn-danger btn-sm" onclick="adminCloseRep('${ap.id}')">❌ رفض</button>`:`<span class="badge">${ap.status==='approved'?'موثّق':'مرفوض'}</span>`}
+    </div></div>`).join('')||'<p class="muted">لا طلبات.</p>'}
+    <h3 style="margin:18px 0 12px">المستشارون الحاليون</h3>
+    ${ad.map(a=>`<div class="rep-card" style="display:flex;align-items:center;gap:10px"><span class="avatar" style="width:34px;height:34px">${a.avatar}</span>
+    <div style="flex:1"><b>${esc(a.name)}</b> ${a.verified?'✅':''}<div class="muted">${SPEC[a.spec]}</div></div>
+    ${a.verified?`<button class="btn btn-danger btn-sm" onclick="adminUnverifyAdv('${a.id}')">سحب التوثيق</button>`:`<button class="btn btn-sm" onclick="adminVerifyAdv('${a.id}')">توثيق</button>`}</div>`).join('')}`;
+  } else if(tab==='reports'){
+    body=`<h3 style="margin:18px 0 12px">🚩 مراجعة البلاغات</h3>
+    ${rp.filter(r=>r.type!=='advisor_apply').map(r=>`<div class="rep-card"><b>${r.type}</b> <span class="badge">${r.status==='open'?'مفتوح':'مغلق'}</span>
+    <p class="muted" style="margin:6px 0">${esc(r.reason)}</p><div class="muted">${ago(r.at)}</div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+    ${r.status==='open'?`<button class="btn btn-sm" onclick="adminCloseRep('${r.id}')">✔️ معالجة</button>
+    <button class="btn btn-danger btn-sm" onclick="adminDeleteContent('${r.type}','${r.refId}','${r.id}')">🗑️ حذف المحتوى المخالف</button>`:''}
+    </div></div>`).join('')||'<p class="muted">لا بلاغات.</p>'}`;
+  }
+  layout('#/admin',`<h2>🛡️ لوحة الإدارة</h2>
+  <div class="sort-row" style="margin-top:14px">
+    ${[['stats','📊 إحصائيات'],['users','👥 المستخدمون'],['content','📝 المحتوى'],['cats','🗂️ التصنيفات'],['advisors','🎓 المستشارون'],['reports','🚩 البلاغات']].map(t=>`<button class="${tab===t[0]?'on':''}" onclick="LS.set('admintab','${t[0]}');route()">${t[1]}</button>`).join('')}
+  </div><div class="card">${body}</div>`);
+}
+window.adminToggleBlock=function(id){ const us=DB.users(); const u=us.find(x=>x.id===id); u.blocked=!u.blocked; DB.saveUsers(us); toast(u.blocked?'تم حظر الحساب':'تم فك الحظر'); route(); };
+window.adminCloseRep=function(id){ const r=DB.reports(); const x=r.find(y=>y.id===id); x.status='closed'; DB.saveReports(r); toast('تمت المعالجة'); route(); };
+window.adminDeleteContent=function(type,refId,repId){
+  if(type==='سؤال') DB.saveQuestions(DB.questions().filter(q=>q.id!==refId));
+  if(type==='تعليق') DB.saveComments(DB.comments().filter(c=>c.id!==refId));
+  adminCloseRep(repId);
+};
+window.adminVerifyAdv=function(id){ const a=DB.advisors(); a.find(x=>x.id===id).verified=true; DB.saveAdvisors(a); toast('تم التوثيق ✓'); route(); };
+window.adminUnverifyAdv=function(id){ const a=DB.advisors(); a.find(x=>x.id===id).verified=false; DB.saveAdvisors(a); toast('تم سحب التوثيق'); route(); };
+window.adminApproveAdv=function(repId){
+  const r=DB.reports(); const ap=r.find(x=>x.id===repId); ap.status='approved'; DB.saveReports(r);
+  notify(ap.by,'🎉 تهانينا','تم قبول طلبك — أنت الآن مستشار موثّق في رأي!','#/profile');
+  toast('تم قبول المستشار وإشعاره ✓'); route();
+};
+
+/* ---------- إقلاع ---------- */
+setTimeout(()=>{ document.getElementById('splash').style.display='none'; route(); },1800);
+</script>
+</body>
+</html>
